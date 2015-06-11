@@ -5,20 +5,32 @@
 #navigator-panel{
     position: absolute;
     top: 0;
-    right: 30px;
+    right: -250px;
     background-color: #fff;
-    width: 0;
+    width: 280px;
     height: 100%;
     box-sizing: border-box;
     border-left: 1px solid #999;
-    -webkit-transition: width .4s;
-    transition: width .4s;
+    -webkit-transition: right .4s;
+    transition: right .4s;
 }
 
 #navigator-content h5{padding: 5px;}
 #navigator-content h5{
     margin: 0;
     color: #999;
+}
+
+#navigator-msg{
+    color: #ccc;
+    text-align: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 40%;
+    font-size: 30px;
+    display: none;
+    line-height: 34px;
 }
 
 
@@ -30,7 +42,7 @@
 
 .main-view.navigator-panel-open .content{right: 310px;}
     
-.main-view.navigator-panel-open #navigator-panel{width: 280px;}
+.main-view.navigator-panel-open #navigator-panel{right: 30px;}
 
 
 .main-view.navigator-panel-open #toolbar-navigator{
