@@ -1,4 +1,6 @@
-#toolbar-navigator{background-color: red;}
+#toolbar-navigator{
+    background: url("toolbar-icon.svg") 0 0 no-repeat;
+}
 
 #navigator-panel{
     position: absolute;
@@ -29,3 +31,8 @@
 .main-view.navigator-panel-open .content{right: 310px;}
     
 .main-view.navigator-panel-open #navigator-panel{width: 280px;}
+
+
+.main-view.navigator-panel-open #toolbar-navigator{
+    background-position: bottom;
+}
