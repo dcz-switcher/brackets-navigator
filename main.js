@@ -10,8 +10,10 @@ define(function (require, exports, module) {
         WorkspaceManager = brackets.getModule("view/WorkspaceManager"),
         DocumentManager = brackets.getModule("document/DocumentManager"),
         EditorManager = brackets.getModule("editor/EditorManager"),
+        navigatorTemplate = require("text!navigator-template.html"),
+        parseJS = require("./parse-js"),
         $toolBarButn = $('<a href="#" id="toolbar-navigator" title="navigator"></a>'),
-        $navigatorPanel = $('<div id="navigator-panel"><div id="navigator-content"><h5>NAVIGATOR</h5><div id="navigator-tree"></div><div id="navigator-msg"></div></div></div>'),
+        $navigatorPanel = $(navigatorTemplate),
         $content = $(".content"),
         $mainView = $(".main-view"),
         $navigatorMsg = $navigatorPanel.find("#navigator-msg"),
@@ -19,8 +21,7 @@ define(function (require, exports, module) {
         isPanelOpen = false,
         document;
     
-        
-            
+
     /**
     * show/hide msg and write text if defined
     */
@@ -33,7 +34,7 @@ define(function (require, exports, module) {
             $navigatorMsg.html(text).show();
         } else {
             $navigatorMsg.empty().hide();
-            $navigatorTree.show();
+            $navigatorTree.empty().show();
         }
     };
     
@@ -44,10 +45,32 @@ define(function (require, exports, module) {
         document = DocumentManager.getCurrentDocument();
         if (document) {
             if (document.language.getName() === "JavaScript") {
-//                navigatorMsgDisplay(false);
-                navigatorMsgDisplay(true, "analyse en cours ...");
+                navigatorMsgDisplay(false);
                 
-                console.log(document.getText());
+                var ast = parse(document.getText()),
+                    tree = "<ul>",
+                    el;
+                console.log(ast);
+                for (var i = 0, l = ast[1].length; i<l; i++) {
+                    el = ast[1][i];
+                    console.log(el);
+                    switch (el[0]) {
+                        case "var":
+                            tree += "<li>" + el[1][0][1][0] + " " + el[1][0][0] + "</li>";
+                        break;
+
+                        case "defun":
+                            tree += "<li>function " + el[1] + "</li>";
+                        break;
+
+                        default:
+                            console.log("inconnu : " + el[0]);
+                    }
+                };
+                
+                tree += "</ul>";
+                
+                $navigatorTree.html(tree);
             } else {
                 navigatorMsgDisplay(true, "Language non supporté");
             }
