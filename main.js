@@ -39,6 +39,48 @@ define(function (require, exports, module) {
     };
     
     /**
+    * analyse d'un noeud AST
+    */
+    var astNodeAnalysis = function (node, tree) {
+        console.log(node[0]);
+        switch (node[0]) {
+            case "toplevel":
+                tree += "<li>toplevel</li>";
+                tree = astNodeAnalysis(node[1][0], tree);
+            break;
+            
+            case "var":
+                tree += "<li>var " + node[1][0][0] + "</li>";
+            break;
+            
+            case "call":
+                tree += "<li>call</li>";
+                tree = astNodeAnalysis(node[1], tree);
+            break;
+
+            case "defun":
+                
+            break;
+            
+            case "function":
+                $.each(node[3], function (i, node){
+                    tree = astNodeAnalysis(node, tree);
+                });
+            break;
+            
+            case "stat":
+                tree = astNodeAnalysis(node[1], tree);
+            break;
+
+            default:
+                console.log("inconnu : " + node[0]);
+        }
+        
+        return tree;
+    };
+    
+    
+    /**
     * perform analysis of the file
     */
     var performAnalysis = function () {
@@ -48,25 +90,28 @@ define(function (require, exports, module) {
                 navigatorMsgDisplay(false);
                 
                 var ast = parse(document.getText()),
-                    tree = "<ul>",
-                    el;
+                    tree = "<ul>";
+                    
                 console.log(ast);
-                for (var i = 0, l = ast[1].length; i<l; i++) {
-                    el = ast[1][i];
-                    console.log(el);
-                    switch (el[0]) {
-                        case "var":
-                            tree += "<li>" + el[1][0][1][0] + " " + el[1][0][0] + "</li>";
-                        break;
-
-                        case "defun":
-                            tree += "<li>function " + el[1] + "</li>";
-                        break;
-
-                        default:
-                            console.log("inconnu : " + el[0]);
-                    }
-                };
+                
+                tree = astNodeAnalysis(ast, tree);
+                
+//                for (var i = 0, l = ast[1].length; i<l; i++) {
+//                    el = ast[1][i];
+//                    console.log(el);
+//                    switch (el[0]) {
+//                        case "var":
+//                            tree += "<li>" + el[1][0][1][0] + " " + el[1][0][0] + "</li>";
+//                        break;
+//
+//                        case "defun":
+//                            tree += "<li>function " + el[1] + "</li>";
+//                        break;
+//
+//                        default:
+//                            console.log("inconnu : " + el[0]);
+//                    }
+//                };
                 
                 tree += "</ul>";
                 

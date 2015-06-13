@@ -1,12 +1,19 @@
-// a simple comment
-var toto = "simple !";
+(function () {
+    // a simple comment
+    var toto = "simple !";
+
+    var titi = "ho";
+
+    function anonymeFunction () {
+        var inside = 3;
+    }
+    
+    function fctOne () {
+    
+    }
 
 
-function anonymeFunction () {
+    var namedFunction = function () {
 
-}
-
-
-var namedFunction = function () {
-
-}
+    }
+}());
