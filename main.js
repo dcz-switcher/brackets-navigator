@@ -50,7 +50,11 @@ define(function (require, exports, module) {
             break;
             
             case "var":
-                tree += "<li>var " + node[1][0][0] + "</li>";
+                if (node[1][0][1][0] === "function") {
+                    tree += "<li>function " + node[1][0][0] + "</li>";
+                } else {
+                    tree += "<li>var " + node[1][0][0] + "("+ node[1][0][1][0] +")</li>";
+                }
             break;
             
             case "call":
@@ -59,13 +63,20 @@ define(function (require, exports, module) {
             break;
 
             case "defun":
-                
-            break;
-            
-            case "function":
+                tree += "<li>function " + node[1] + "</li>";
+                tree += "<ul>";
                 $.each(node[3], function (i, node){
                     tree = astNodeAnalysis(node, tree);
                 });
+                tree += "</ul>";
+            break;
+            
+            case "function":
+                tree += "<ul>";
+                $.each(node[3], function (i, node){
+                    tree = astNodeAnalysis(node, tree);
+                });
+                tree += "</ul>";
             break;
             
             case "stat":
