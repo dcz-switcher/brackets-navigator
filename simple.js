@@ -1,4 +1,18 @@
 (function () {
+    
+    var obj = {
+        prop : "myProperty",
+        
+        getProp : function () {
+            return this.prop;
+        },
+        
+        setProp : function (val) {
+            this.prop = val;
+        }
+    };
+    
+    
     // a simple comment
     var toto = "simple !";
 
