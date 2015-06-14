@@ -12,6 +12,7 @@ define(function (require, exports, module) {
         EditorManager = brackets.getModule("editor/EditorManager"),
         navigatorTemplate = require("text!navigator-template.html"),
         parseJS = require("./parse-js"),
+        esprima = require("./esprima"),
         $toolBarButn = $('<a href="#" id="toolbar-navigator" title="navigator"></a>'),
         $navigatorPanel = $(navigatorTemplate),
         $content = $(".content"),
