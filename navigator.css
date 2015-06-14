@@ -33,7 +33,14 @@
     line-height: 34px;
 }
 
+#navigator-tree{
+    color: #000;
+    font-size: 14px;
+}
 
+.tree-function{
+    list-style-image: url("tree-icons.svg");
+}
 
 .main-view .content{
     -webkit-transition: right .4s;

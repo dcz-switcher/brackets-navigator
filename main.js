@@ -19,7 +19,8 @@ define(function (require, exports, module) {
         $navigatorMsg = $navigatorPanel.find("#navigator-msg"),
         $navigatorTree = $navigatorPanel.find("#navigator-tree"),
         isPanelOpen = false,
-        document;
+        document,
+        language;
     
 
     /**
@@ -51,7 +52,10 @@ define(function (require, exports, module) {
             
             case "var":
                 if (node[1][0][1][0] === "function") {
-                    tree += "<li>function " + node[1][0][0] + "</li>";
+                    tree += "<li class='tree-function'>function " + node[1][0][0] + "</li>";
+                    tree += "<ul>";
+                    tree = astNodeAnalysis(node[1][0][1][3][0], tree);
+                    tree += "</ul>";
                 } else {
                     tree += "<li>var " + node[1][0][0] + "("+ node[1][0][1][0] +")</li>";
                 }
@@ -59,11 +63,15 @@ define(function (require, exports, module) {
             
             case "call":
                 tree += "<li>call</li>";
-                tree = astNodeAnalysis(node[1], tree);
+                if(node[2].length === 0) {
+                    tree = astNodeAnalysis(node[1], tree);
+                } else {
+                    tree = astNodeAnalysis(node[2][0], tree);
+                }
             break;
 
             case "defun":
-                tree += "<li>function " + node[1] + "</li>";
+                tree += "<li class='tree-function'>function " + node[1] + "</li>";
                 tree += "<ul>";
                 $.each(node[3], function (i, node){
                     tree = astNodeAnalysis(node, tree);
@@ -97,7 +105,8 @@ define(function (require, exports, module) {
     var performAnalysis = function () {
         document = DocumentManager.getCurrentDocument();
         if (document) {
-            if (document.language.getName() === "JavaScript") {
+            language = document.language.getName();
+            if (language === "JavaScript") {
                 navigatorMsgDisplay(false);
                 
                 var ast = parse(document.getText()),
@@ -107,28 +116,11 @@ define(function (require, exports, module) {
                 
                 tree = astNodeAnalysis(ast, tree);
                 
-//                for (var i = 0, l = ast[1].length; i<l; i++) {
-//                    el = ast[1][i];
-//                    console.log(el);
-//                    switch (el[0]) {
-//                        case "var":
-//                            tree += "<li>" + el[1][0][1][0] + " " + el[1][0][0] + "</li>";
-//                        break;
-//
-//                        case "defun":
-//                            tree += "<li>function " + el[1] + "</li>";
-//                        break;
-//
-//                        default:
-//                            console.log("inconnu : " + el[0]);
-//                    }
-//                };
-                
                 tree += "</ul>";
                 
                 $navigatorTree.html(tree);
             } else {
-                navigatorMsgDisplay(true, "Language non supporté");
+                navigatorMsgDisplay(true, language.toLowerCase() + " non supporté");
             }
         } else {
             navigatorMsgDisplay(true, "Aucun document à analyser");
@@ -140,6 +132,12 @@ define(function (require, exports, module) {
         performAnalysis();
     };
                      
+    var documentOnSave = function () {
+        if (isPanelOpen) {
+            performAnalysis();
+        }                                
+    };
+                                      
     /**
     * init extension (only if stylesheet is loaded ... see at the bottom)
     */
@@ -158,8 +156,10 @@ define(function (require, exports, module) {
             if (isPanelOpen) {
                 performAnalysis();
                 EditorManager.on("activeEditorChange", activeEditorChangeHandler);
+                DocumentManager.on("documentSaved", documentOnSave);
             } else {
                 EditorManager.off("activeEditorChange", activeEditorChangeHandler);
+                DocumentManager.off("documentSaved", documentOnSave);
             }
         });
         

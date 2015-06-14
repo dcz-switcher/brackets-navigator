@@ -14,6 +14,6 @@
 
 
     var namedFunction = function () {
-
+        var toto = 3;
     }
 }());
