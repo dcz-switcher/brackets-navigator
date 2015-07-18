@@ -102,23 +102,23 @@ define(function (require, exports, module) {
     var esprimaAnalysis = function (node, tree) {
     
         if (node.type !== undefined) {
-            tree += "<li>";
+            tree += "<li ";
 
             switch(node.type) {
                 case "Program":
-                    tree += "program";
+                    tree += ">program";
                     $.each(node.body, function (i, subNode) {
                         tree = esprimaAnalysis(subNode, tree);
                     });
                 break;
 
                 case "ExpressionStatement":
-                    tree += "ExpressionStatement";
+                    tree += ">ExpressionStatement";
                     tree = esprimaAnalysis(node.expression, tree);
                 break;
                     
                 case "CallExpression":
-                    tree += "CallExpression";
+                    tree += ">CallExpression";
                     $.each(node.arguments, function (i, subNode) {
                         tree = esprimaAnalysis(subNode, tree);
                     });
@@ -127,11 +127,11 @@ define(function (require, exports, module) {
                 break;
                 
                 case "Identifier":
-                    tree += "Identifier " + node.name + " (stop)";
+                    tree += ">Identifier " + node.name + " (stop)";
                 break;
                 
                 case "FunctionExpression":
-                    tree += "FunctionExpression";
+                    tree += ">FunctionExpression";
                     $.each(node.params, function (i, subNode) {
                         tree = esprimaAnalysis(subNode, tree);
                     });
@@ -140,26 +140,36 @@ define(function (require, exports, module) {
                 break;
                 
                 case "BlockStatement":
-                    tree += "BlockStatement";
+                    tree += ">BlockStatement";
                     $.each(node.body, function (i, subNode) {
                         tree = esprimaAnalysis(subNode, tree);
                     });
                 break;
                 
                 case 'VariableDeclaration':
-                    tree += "VariableDeclaration";
+                    tree += ">VariableDeclaration";
                     $.each(node.declarations, function (i, subNode) {
                         tree = esprimaAnalysis(subNode, tree);
                     });
                 break;
                 
                 case "VariableDeclarator":
-                    tree += "VariableDeclarator";
+                    tree += ">VariableDeclarator";
                     tree = esprimaAnalysis(node.id, tree);
                 break;
                 
+                case "FunctionDeclaration":
+                    tree += "class='tree-function'>";
+                    $.each(node.params, function (i, subNode) {
+                        tree = esprimaAnalysis(subNode, tree);
+                    });
+                    tree += "<ul>";
+                    tree = esprimaAnalysis(node.body, tree);
+                    tree += "</ul>";
+                break;
+                
                 default:
-                    tree += "unsupported type " + node.type;
+                    tree += ">unsupported type " + node.type;
             }
 
             tree += "</li>";
