@@ -99,6 +99,77 @@ define(function (require, exports, module) {
         return tree;
     };
     
+    var esprimaAnalysis = function (node, tree) {
+    
+        if (node.type !== undefined) {
+            tree += "<li>";
+
+            switch(node.type) {
+                case "Program":
+                    tree += "program";
+                    $.each(node.body, function (i, subNode) {
+                        tree = esprimaAnalysis(subNode, tree);
+                    });
+                break;
+
+                case "ExpressionStatement":
+                    tree += "ExpressionStatement";
+                    tree = esprimaAnalysis(node.expression, tree);
+                break;
+                    
+                case "CallExpression":
+                    tree += "CallExpression";
+                    $.each(node.arguments, function (i, subNode) {
+                        tree = esprimaAnalysis(subNode, tree);
+                    });
+                    
+                    tree = esprimaAnalysis(node.callee, tree);
+                break;
+                
+                case "Identifier":
+                    tree += "Identifier " + node.name + " (stop)";
+                break;
+                
+                case "FunctionExpression":
+                    tree += "FunctionExpression";
+                    $.each(node.params, function (i, subNode) {
+                        tree = esprimaAnalysis(subNode, tree);
+                    });
+                    
+                    tree = esprimaAnalysis(node.body, tree);
+                break;
+                
+                case "BlockStatement":
+                    tree += "BlockStatement";
+                    $.each(node.body, function (i, subNode) {
+                        tree = esprimaAnalysis(subNode, tree);
+                    });
+                break;
+                
+                case 'VariableDeclaration':
+                    tree += "VariableDeclaration";
+                    $.each(node.declarations, function (i, subNode) {
+                        tree = esprimaAnalysis(subNode, tree);
+                    });
+                break;
+                
+                case "VariableDeclarator":
+                    tree += "VariableDeclarator";
+                    tree = esprimaAnalysis(node.id, tree);
+                break;
+                
+                default:
+                    tree += "unsupported type " + node.type;
+            }
+
+            tree += "</li>";
+        } else {
+            tree += "<li>type undefined</li>";
+        }
+        
+        return tree;
+    };
+    
     
     /**
     * perform analysis of the file
@@ -110,16 +181,14 @@ define(function (require, exports, module) {
             if (language === "JavaScript") {
                 navigatorMsgDisplay(false);
                 
-                var ast = parse(document.getText()),
-                    tree = "<ul>";
-                    
-                console.log(ast);
+                var node = esprima.parse(document.getText(), {comment: true}),
+                    treeRender = "<ul>";
+                   
+                treeRender += esprimaAnalysis(node, treeRender);
                 
-                tree = astNodeAnalysis(ast, tree);
+                treeRender += "</ul>";
                 
-                tree += "</ul>";
-                
-                $navigatorTree.html(tree);
+                $navigatorTree.html(treeRender);
             } else {
                 navigatorMsgDisplay(true, language.toLowerCase() + " non supporté");
             }

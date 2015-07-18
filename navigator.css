@@ -36,9 +36,14 @@
 #navigator-tree{
     color: #000;
     font-size: 14px;
+    overflow: scroll;
+    height: 100%;
+    position: absolute;
+    top: 0;
 }
 
 #navigator-tree ul{
+    margin-top: 50px;
     margin-left: 20px;
     list-style: none;
 }
