@@ -15,8 +15,8 @@
     transition: right .4s;
 }
 
-#navigator-content h5{padding: 5px;}
 #navigator-content h5{
+    padding: 5px;
     margin: 0;
     color: #999;
     background-color: #fff;
@@ -37,19 +37,23 @@
 #navigator-tree{
     color: #000;
     font-size: 14px;
-    overflow: scroll;
+    overflow: auto;
     height: 100%;
+    width: 100%;
     position: absolute;
     top: 0;
 }
 
 #navigator-tree ul{
-    margin-top: 50px;
     margin-left: 20px;
     list-style: none;
 }
 
-    #navigator-tree li{
+#navigator-tree > ul{
+    margin-top: 30px;
+}
+
+#navigator-tree li{
     padding: 2px 0;
 }
 
